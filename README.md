@@ -61,6 +61,32 @@ Arguments
 * _cb_ - a callback to be called in the normal node way with an error (or null)
   and the video details
 
+**search**
+
+Performs a search and returns the results. `parameters` is an object that is
+used to construct the query string for the search URL. Available parameters are:
+`k` (the actual search string), `sort` (relevance, uploaddate, rating), `datef`
+("date filter"), (all, today, week, month), `durf` ("duration filter"),
+(allduration, 1-3min, 3-10min, 10min_more), and `p`, which is the page number.
+
+```javascript
+xv.search(parameters, cb);
+```
+
+```javascript
+// get details about a video
+xv.search({k: "porn"}, function(err, results) {
+  console.log(err, results);
+});
+```
+
+Arguments
+
+* _parameters_ - an object containing parameters for the query string (see above
+  for details about its properties)
+* _cb_ - a callback to be called in the normal node way with an error (or null)
+  and the search results
+
 Example
 -------
 

@@ -2,7 +2,24 @@
 
 var xv = require("./");
 
-// get details about a video
-xv.details("http://www.xvideos.com/video3823160/stranded_busty_sweetie_decides_to_have_sex_with_a_stranger_in_public_for_money", function(err, details) {
-  console.log(err, details);
+// search for... porn!
+xv.search({k: "porn", sort: "uploaddate", durf: "10min_more"}, function(err, res) {
+  if (err) {
+    return console.warn(err);
+  }
+
+  console.log("Found " + res.videos.length + " results... Getting details...");
+
+  // get details about each video
+  res.videos.forEach(function(video) {
+    xv.details(video.url, function(err, details) {
+      if (err) {
+        return console.warn("Error fetching details for " + video.url);
+      }
+
+      console.log("");
+      console.log(details.title + " (" + video.url + ")");
+      console.log("[ " + details.tags.join(", ") + " ]");
+    });
+  });
 });

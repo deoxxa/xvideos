@@ -1,5 +1,7 @@
 var cheerio = require("cheerio"),
-    http = require("http");
+    http = require("http"),
+    qs = require("querystring"),
+    url = require("url");
 
 var XVideos = module.exports;
 
@@ -72,17 +74,41 @@ XVideos.details = function details(url, cb) {
   req.once("error", cb);
 };
 
-XVideos.search = function search(parameters) {
-  var req = http.get("http://www.xvideos.com/video" + id, function(res) {
-    if (res.statusCode === 404) {
-      return cb(Error("video not found"));
+XVideos.search = function search(parameters, cb) {
+  var req = http.get("http://www.xvideos.com/?" + qs.stringify(parameters), function(res) {
+    var body = Buffer(0);
+
+    res.on("readable", function() {
+      var chunk;
+      while (chunk = res.read()) {
+        body = Buffer.concat([body, chunk]);
+      }
+    });
+
+    if (res.statusCode !== 200) {
+      return cb(Error("incorrect status code; expected 200 but got " + res.statusCode));
     }
 
-    if (res.statusCode !== 301) {
-      return cb(Error("incorrect status code; expected 301 but got " + res.statusCode));
-    }
+    res.on("end", function() {
+      body = body.toString("utf8");
 
-    return cb(null, res.headers.location);
+      var $ = cheerio.load(body);
+
+      var videos = $(".thumbBlock > .thumbInside").map(function(i, e) {
+        var html = $(e).find("script").text().replace(/^thumbcastDisplayRandomThumb\('(.+?)'\);$/, "$1"),
+            $$ = cheerio.load(html);
+
+        return {
+          url: url.resolve("http://www.xvideos.com/", $$("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
+          title: $$("p > a").text(),
+          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim(),
+        };
+      });
+
+      var total = parseInt($("h3.blackTitle").text().replace(/[\r\n]/g, " ").replace(/^.*- (\d+) results.*$/, "$1"), 10);
+
+      return cb(null, {total: total, videos: videos});
+    });
   });
 
   req.once("error", cb);
