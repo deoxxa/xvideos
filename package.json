@@ -1,0 +1,22 @@
+{
+  "name": "xvideos",
+  "version": "0.0.0",
+  "description": "Access xvideos.com programmatically",
+  "main": "xvideos.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/deoxxa/xvideos.git"
+  },
+  "keywords": [
+    "xvideos",
+    "search",
+    "porn",
+    "web"
+  ],
+  "author": "Conrad Pankoff <deoxxa@fknsrs.biz> (http://www.fknsrs.biz/)",
+  "license": "BSD",
+  "dependencies": {
+    "cheerio": "~0.10.8"
+  }
+}
