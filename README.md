@@ -35,10 +35,7 @@ Or via git:
 Usage
 -----
 
-Both the parser and serialiser are streams. The parser expects buffers on input
-and outputs objects. The serialiser expects objects on input and outputs
-buffers. See the Node.JS [stream](http://nodejs.org/docs/latest/api/stream.html)
-docs for more on how to use streams.
+The `xvideos` package exports a single documented function right now, `details`.
 
 XVideos API
 -----------
@@ -67,7 +64,7 @@ Arguments
 Example
 -------
 
-Also see [example.js](https://github.com/deoxxa/flv/blob/master/example.js).
+Also see [example.js](https://github.com/deoxxa/xvideos/blob/master/example.js).
 
 ```javascript
 #!/usr/bin/env node
