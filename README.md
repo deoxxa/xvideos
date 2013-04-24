@@ -69,7 +69,7 @@ Also see [example.js](https://github.com/deoxxa/xvideos/blob/master/example.js).
 ```javascript
 #!/usr/bin/env node
 
-var xv = require("./");
+var xv = require("xvideos");
 
 // get details about a video
 xv.details("http://www.xvideos.com/video3823160/stranded_busty_sweetie_decides_to_have_sex_with_a_stranger_in_public_for_money", function(err, details) {
