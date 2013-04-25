@@ -95,12 +95,17 @@ XVideos.search = function search(parameters, cb) {
       var $ = cheerio.load(body);
 
       var videos = $(".thumbBlock > .thumbInside").map(function(i, e) {
-        var html = $(e).find("script").text().replace(/^thumbcastDisplayRandomThumb\('(.+?)'\);$/, "$1"),
-            $$ = cheerio.load(html);
+        var find;
+
+        if ($(e).find("script").length) {
+          find = cheerio.load($(e).find("script").text().replace(/^thumbcastDisplayRandomThumb\('(.+?)'\);$/, "$1"));
+        } else {
+          find = $(e).find.bind($(e));
+        }
 
         return {
-          url: url.resolve("http://www.xvideos.com/", $$("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
-          title: $$("p > a").text(),
+          url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
+          title: find("p > a").text(),
           duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim(),
         };
       });
