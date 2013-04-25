@@ -1,6 +1,6 @@
 {
   "name": "xvideos",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Access xvideos.com programmatically",
   "main": "xvideos.js",
   "scripts": {},
