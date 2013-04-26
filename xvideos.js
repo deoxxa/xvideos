@@ -74,7 +74,7 @@ XVideos.details = function details(url, cb) {
   req.once("error", cb);
 };
 
-XVideos.constructSearchUrl(parameters) {
+XVideos.constructSearchUrl = function constructSearchUrl(parameters) {
   return "http://www.xvideos.com/?" + qs.stringify(parameters);
 };
 
