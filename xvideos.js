@@ -74,8 +74,12 @@ XVideos.details = function details(url, cb) {
   req.once("error", cb);
 };
 
+XVideos.constructSearchUrl(parameters) {
+  return "http://www.xvideos.com/?" + qs.stringify(parameters);
+};
+
 XVideos.search = function search(parameters, cb) {
-  var req = http.get("http://www.xvideos.com/?" + qs.stringify(parameters), function(res) {
+  var req = http.get(this.constructSearchUrl(parameters), function(res) {
     var body = Buffer(0);
 
     res.on("readable", function() {
