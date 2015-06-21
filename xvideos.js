@@ -67,7 +67,12 @@ XVideos.details = function details(url, cb) {
         return cb(Error("couldn't find flv"));
       }
 
-      return cb(null, {title: title, duration: duration, tags: tags, flv: flv});
+      var thumb;
+      if (matches = body.match(/url_bigthumb=(http:\/\/.+?)&amp;/)) {
+        thumb = unescape(matches[1]);
+      }
+
+      return cb(null, {title: title, duration: duration, tags: tags, flv: flv, thumb: thumb});
     });
   });
 
