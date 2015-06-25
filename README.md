@@ -57,7 +57,7 @@ xv.details("http://www.xvideos.com/video3823160/stranded_busty_sweetie_decides_t
 
 Arguments
 
-* _uri_ - a full url to an xvideos video page
+* _uri_ - a full url to xvideos video page
 * _cb_ - a callback to be called in the normal node way with an error (or null)
   and the video details
 
@@ -74,7 +74,7 @@ xv.search(parameters, cb);
 ```
 
 ```javascript
-// get details about a video
+// get search results
 xv.search({k: "porn"}, function(err, results) {
   console.log(err, results);
 });
@@ -84,6 +84,27 @@ Arguments
 
 * _parameters_ - an object containing parameters for the query string (see above
   for details about its properties)
+* _cb_ - a callback to be called in the normal node way with an error (or null)
+  and the search results
+
+**favorite**
+
+Gets list of videos from specified favorites page. Returns full url, title and duration of each video.
+
+```javascript
+xv.favorite(url, cb);
+```
+
+```javascript
+// get videos from favorites page
+xv.favorite("http://www.xvideos.com/favorite/8560867/resurface/", function(err, results) {
+  console.log(err, results);
+});
+```
+
+Arguments
+
+* _url_ - - a full url to favorites page
 * _cb_ - a callback to be called in the normal node way with an error (or null)
   and the search results
 
