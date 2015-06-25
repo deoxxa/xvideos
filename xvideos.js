@@ -127,3 +127,46 @@ XVideos.search = function search(parameters, cb) {
 
   req.once("error", cb);
 };
+
+XVideos.favorite = function search(url, cb) {
+  var req = http.get(url, function(res) {
+    var body = Buffer(0);
+
+    res.on("readable", function() {
+      var chunk;
+      while (chunk = res.read()) {
+        body = Buffer.concat([body, chunk]);
+      }
+    });
+
+    if (res.statusCode === 404) {
+      return cb(Error("list page not found"));
+    }
+
+    if (res.statusCode !== 200) {
+      return cb(Error("incorrect status code; expected 200 but got " + res.statusCode));
+    }
+
+    res.on("end", function() {
+      body = body.toString("utf8");
+
+      var $ = cheerio.load(body);
+
+      var videos = $(".thumbBlock > .thumbInside").map(function(i, e) {
+        var find = $(e).find.bind($(e));
+
+        return {
+          url: "http://www.xvideos.com/" + find("div.thumb > a").attr("href"),
+          title: find("p > a").text(),
+          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim(),
+        };
+      });
+
+      var total = $(".thumbBlock > .thumbInside").length;
+
+      return cb(null, {total: total, videos: videos});
+    });
+  });
+
+  req.once("error", cb);
+};
