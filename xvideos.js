@@ -72,7 +72,9 @@ XVideos.details = function details(url, cb) {
         thumb = unescape(matches[1]);
       }
 
-      return cb(null, {title: title, duration: duration, tags: tags, flv: flv, thumb: thumb});
+      var embed = $("input#mediaEmbedCodeInput").attr("value");
+
+      return cb(null, {title: title, duration: duration, tags: tags, flv: flv, thumb: thumb, embed: embed});
     });
   });
 
