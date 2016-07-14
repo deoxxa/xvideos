@@ -14,7 +14,7 @@ xv.search({k: "porn", sort: "uploaddate", durf: "10min_more"}, function(err, res
   res.videos.forEach(function(video) {
     xv.details(video.url, function(err, details) {
       if (err) {
-        return console.warn("Error fetching details for " + video.url);
+        return console.warn("Error fetching details for " + video.url, err);
       }
 
       console.log("");
