@@ -1,7 +1,7 @@
 var cheerio = require("cheerio"),
-    http = require("http"),
-    qs = require("querystring"),
-    url = require("url");
+  http = require("http"),
+  qs = require("querystring"),
+  url = require("url");
 
 var XVideos = module.exports;
 
@@ -59,17 +59,17 @@ XVideos.details = function details(url, cb) {
 
       var duration = $(".duration").text().trim().replace(/^-/, "").trim();
 
-			var player = $("#video-player-bg");
-			var urls = {};
-			var thumb;
-			if (player) {
-				urls.low = body.match(/html5player.setVideoUrlLow\(\'(.*)\'\);/)[1];
-				urls.high = body.match(/html5player.setVideoUrlHigh\(\'(.*)\'\);/)[1];
-				urls.hls = body.match(/html5player.setVideoHLS\(\'(.*)\'\);/)[1];
-				thumb = body.match(/html5player.setThumbSlide\(\'(.*)\'\);/)[1];
-			} else {
-				return cb(Error("couldn't find player"));
-			}
+      var player = $("#video-player-bg");
+      var urls = {};
+      var thumb;
+      if (player) {
+        urls.low = body.match(/html5player.setVideoUrlLow\(\'(.*)\'\);/)[1];
+        urls.high = body.match(/html5player.setVideoUrlHigh\(\'(.*)\'\);/)[1];
+        urls.hls = body.match(/html5player.setVideoHLS\(\'(.*)\'\);/)[1];
+        thumb = body.match(/html5player.setThumbSlide\(\'(.*)\'\);/)[1];
+      } else {
+        return cb(Error("couldn't find player"));
+      }
 
       return cb(null, {title: title, duration: duration, tags: tags, urls: urls, thumb: thumb});
     });
@@ -100,21 +100,17 @@ XVideos.search = function search(parameters, cb) {
     res.on("end", function() {
       body = body.toString("utf8");
 
-			var $ = cheerio.load(body);
+      var $ = cheerio.load(body);
 
-      var videos = $(".thumb-block").map(function(i, e) {
-        var find;
-
-        if ($(e).find("script").length) {
-          find = cheerio.load($(e).find("script").text().replace(/^displayRandomThumb\('(.+?)'\);$/, "$1"));
-        } else {
-          find = $(e).find.bind($(e));
-        }
+      var videos = $(".thumb-block").map(function (i, e) {
+        var href = $(e).toString().match(/href=\"([^\"]*)\"/)[1];
+        var title = $(e).toString().match(/title=\"([^\"]*)\"/)[1];
 
         return {
-          url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
-          title: find("p > a").text(),
-          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim(),
+          //url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
+          url: url.resolve("http://www.xvideos.com/", href.replace("/THUMBNUM/", "/")),
+          title: title,
+          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim()
         };
       });
 

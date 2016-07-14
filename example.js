@@ -3,7 +3,7 @@
 var xv = require("./");
 
 // search for... porn!
-xv.search({k: "porn", sort: "uploaddate", durf: "10min_more"}, function(err, res) {
+xv.search({k: "hot teens", sort: "uploaddate", durf: "10min_more"}, function(err, res) {
   if (err) {
     return console.warn(err);
   }
