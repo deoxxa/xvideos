@@ -18,8 +18,8 @@ xv.search({k: "hot teens", sort: "uploaddate", durf: "10min_more"}, function(err
       }
 
       console.log("");
-      console.log(details.title + " (" + video.url + ")");
-      console.log("[ " + details.tags.join(", ") + " ]");
+      console.log("title: " + details.title + "\nvideo url: " + video.url + "\nthumbnail: " + video.thumb);
+      console.log("tags: [ " + details.tags.join(", ") + " ]");
     });
   });
 });

@@ -100,15 +100,19 @@ XVideos.search = function search(parameters, cb) {
     res.on("end", function() {
       body = body.toString("utf8");
 
+			//console.log(body);
+
       var $ = cheerio.load(body);
 
       var videos = $(".thumb-block").map(function (i, e) {
         var href = $(e).toString().match(/href=\"([^\"]*)\"/)[1];
+        var thumb = $(e).toString().match(/src=\"([^\"]*)\"/)[1];
         var title = $(e).toString().match(/title=\"([^\"]*)\"/)[1];
 
         return {
           //url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
           url: url.resolve("http://www.xvideos.com/", href.replace("/THUMBNUM/", "/")),
+          thumb: thumb.replace(/THUMBNUM/, "1"),
           title: title,
           duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim()
         };
