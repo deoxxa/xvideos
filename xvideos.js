@@ -1,7 +1,7 @@
 var cheerio = require("cheerio"),
-    http = require("http"),
-    qs = require("querystring"),
-    url = require("url");
+  http = require("http"),
+  qs = require("querystring"),
+  url = require("url");
 
 var XVideos = module.exports;
 
@@ -51,28 +51,27 @@ XVideos.details = function details(url, cb) {
 
       var title = $("#main > h2").text().replace(/-[^-]+$/, "").trim();
 
-      var tags = $("#video-tags > li > a").map(function(i, e) {
+      var tags = $(".video-tags > a").map(function(i, e) {
         return $(e).text().trim();
-      }).filter(function(e) {
-        return e !== "tags";
+      }).toArray().filter(function(e) {
+        return e !== "more tags";
       });
 
       var duration = $(".duration").text().trim().replace(/^-/, "").trim();
 
-      var flv;
-      if (matches = body.match(/flv_url=(http%3A%2F%2F.+?)&amp;/)) {
-        flv = unescape(matches[1]);
-      }
-      if (!flv) {
-        return cb(Error("couldn't find flv"));
-      }
-
+      var player = $("#video-player-bg");
+      var urls = {};
       var thumb;
-      if (matches = body.match(/url_bigthumb=(http:\/\/.+?)&amp;/)) {
-        thumb = unescape(matches[1]);
+      if (player) {
+        urls.low = body.match(/html5player.setVideoUrlLow\(\'(.*)\'\);/)[1];
+        urls.high = body.match(/html5player.setVideoUrlHigh\(\'(.*)\'\);/)[1];
+        urls.hls = body.match(/html5player.setVideoHLS\(\'(.*)\'\);/)[1];
+        thumb = body.match(/html5player.setThumbSlide\(\'(.*)\'\);/)[1];
+      } else {
+        return cb(Error("couldn't find player"));
       }
 
-      return cb(null, {title: title, duration: duration, tags: tags, flv: flv, thumb: thumb});
+      return cb(null, {title: title, duration: duration, tags: tags, urls: urls, thumb: thumb});
     });
   });
 
@@ -101,27 +100,27 @@ XVideos.search = function search(parameters, cb) {
     res.on("end", function() {
       body = body.toString("utf8");
 
+			//console.log(body);
+
       var $ = cheerio.load(body);
 
-      var videos = $(".thumbBlock > .thumbInside").map(function(i, e) {
-        var find;
-
-        if ($(e).find("script").length) {
-          find = cheerio.load($(e).find("script").text().replace(/^thumbcastDisplayRandomThumb\('(.+?)'\);$/, "$1"));
-        } else {
-          find = $(e).find.bind($(e));
-        }
+      var videos = $(".thumb-block").map(function (i, e) {
+        var href = $(e).toString().match(/href=\"([^\"]*)\"/)[1];
+        var thumb = $(e).toString().match(/src=\"([^\"]*)\"/)[1];
+        var title = $(e).toString().match(/title=\"([^\"]*)\"/)[1];
 
         return {
-          url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
-          title: find("p > a").text(),
-          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim(),
+          //url: url.resolve("http://www.xvideos.com/", find("div.thumb > a").attr("href").replace("/THUMBNUM/", "/")),
+          url: url.resolve("http://www.xvideos.com/", href.replace("/THUMBNUM/", "/")),
+          thumb: thumb.replace(/THUMBNUM/, "1"),
+          title: title,
+          duration: $(e).find("span.duration").text().replace(/[\(\)]/g, "").trim()
         };
       });
 
-      var total = parseInt($("h3.blackTitle").text().replace(/[\r\n]/g, " ").replace(/^.*- (\d+) results.*$/, "$1"), 10);
+      var total = parseInt($("h4.bg-title").text().replace(/[\r\n]/g, " ").replace(/^.*[-]\s*([\d,]*) results.*$/, "$1").replace(",", ""), 10);
 
-      return cb(null, {total: total, videos: videos});
+      return cb(null, {total: total, videos: videos.toArray()});
     });
   });
 
